@@ -40,6 +40,12 @@
         .sidebar a:hover {
             background: #343a40;
         }
+
+        .chart-wrap {
+            position: relative;
+            height: 320px;
+            max-width: 920px;
+        }
     </style>
 </head>
 
@@ -103,6 +109,17 @@
 
             </div>
 
+            <div class="mt-5">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h4 class="mb-3">Stock by Category</h4>
+                        <div class="chart-wrap">
+                            <canvas id="categoryStockChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Product table -->
             <div class="mt-5">
                 <h4>Recent Products</h4>
@@ -127,80 +144,9 @@
 </div>
 
 <script src="js/theme.js"></script>
-<script>
-
-let user = JSON.parse(localStorage.getItem("user"));
-if (!user) {
-    window.location.href = "login.html";
-} else {
-    document.getElementById("username").innerText = user.name;
-}
-
-
-// Dashboar data loading for 4 cards
-function loadDashboard() {
-
-    fetch("http://localhost/Company-Inventory-Management-System/backend/api/dashboard_stats.php")
-    .then(res => {
-        if (!res.ok) {
-            throw new Error("Failed to load dashboard stats");
-        }
-        return res.json();
-    })
-    .then(data => {
-        if(data.success){
-            document.getElementById("totalProducts").innerText = data.data.total_products || 0;
-            document.getElementById("totalStock").innerText = data.data.total_stock || 0;
-            document.getElementById("totalCategories").innerText = data.data.total_categories || 0;
-            document.getElementById("totalUsers").innerText = data.data.total_users || 0;
-        }
-    })
-    .catch(error => console.error("Error loading dashboard stats:", error));
-
-    fetch("http://localhost/Company-Inventory-Management-System/backend/api/get_products.php?limit=5")
-    .then(res => {
-        if (!res.ok) {
-            throw new Error("Failed to load recent products");
-        }
-        return res.json();
-    })
-    .then(data => {
-        // Table
-        let table = document.getElementById("productTable");
-        table.innerHTML = "";
-
-        if(data.data && data.data.length > 0){
-            data.data.forEach(p => {
-                table.innerHTML += `
-                    <tr>
-                        <td>${p.name}</td>
-                        <td>${p.price}</td>
-                        <td>${p.stock}</td>
-                        <td>${p.category_name || '-'}</td>
-                    </tr>
-                `;
-            });
-        } else {
-            table.innerHTML = '<tr><td colspan="4" class="text-center">No recent products found.</td></tr>';
-        }
-    })
-    .catch(error => {
-        console.error("Error loading recent products:", error);
-        let table = document.getElementById("productTable");
-        table.innerHTML = '<tr><td colspan="4" class="text-center">Error loading products.</td></tr>';
-    });
-
-}
-
-loadDashboard();
-
-// Logout function
-function logout() {
-    localStorage.removeItem("user");
-    window.location.href = "login.html";
-}
-
-</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/logout.js"></script>
 
 </body>
 </html>
