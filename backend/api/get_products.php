@@ -4,8 +4,10 @@ include "../config/db.php";
 
 $search = isset($_GET['search']) ? $_GET['search'] : "";
 $category = isset($_GET['category']) ? $_GET['category'] : "";
-$page = isset($_GET['page']) ? $_GET['page'] : 1;
-$limit = 5;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 5;
+$page = $page > 0 ? $page : 1;
+$limit = $limit > 0 ? $limit : 5;
 $offset = ($page - 1) * $limit;
 
 $sort = isset($_GET['sort']) ? $_GET['sort'] : "id";

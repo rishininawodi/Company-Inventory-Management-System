@@ -13,7 +13,111 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('searchInput');
     const categoryFilter = document.getElementById('categoryFilter');
     const filterBtn = document.getElementById('filterBtn');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+    const exportPdfBtn = document.getElementById('exportPdfBtn');
     const pagination = document.getElementById('pagination');
+
+    function getExportFileName(ext) {
+        const now = new Date();
+        const stamp = now.toISOString().slice(0, 19).replace(/[:T]/g, '-');
+        return `products-${stamp}.${ext}`;
+    }
+
+    async function fetchAllProductsForExport() {
+        const url = `http://localhost/Company-Inventory-Management-System/backend/api/get_products.php?page=1&limit=100000&sort=${encodeURIComponent(currentSort)}&order=${encodeURIComponent(currentOrder)}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Failed to fetch products for export');
+        }
+
+        const data = await response.json();
+        return Array.isArray(data.data) ? data.data : [];
+    }
+
+    function escapeCsvValue(value) {
+        const text = String(value ?? '');
+        const escaped = text.replace(/"/g, '""');
+        return `"${escaped}"`;
+    }
+
+    async function exportCsv() {
+        try {
+            const products = await fetchAllProductsForExport();
+            if (products.length === 0) {
+                alert('No products available to export.');
+                return;
+            }
+
+            const headers = ['ID', 'Name', 'Price', 'Stock', 'Category', 'Created At'];
+            const rows = products.map(p => [
+                p.id,
+                p.name,
+                p.price,
+                p.stock,
+                p.category_name || 'Uncategorized',
+                p.created_at || ''
+            ]);
+
+            const csvContent = [headers, ...rows]
+                .map(row => row.map(cell => escapeCsvValue(cell)).join(','))
+                .join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const downloadUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = getExportFileName('csv');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(downloadUrl);
+        } catch (error) {
+            console.error('CSV export error:', error);
+            alert('Failed to export CSV.');
+        }
+    }
+
+    async function exportPdf() {
+        try {
+            const products = await fetchAllProductsForExport();
+            if (products.length === 0) {
+                alert('No products available to export.');
+                return;
+            }
+
+            if (!window.jspdf || typeof window.jspdf.jsPDF !== 'function') {
+                throw new Error('jsPDF library not loaded');
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape' });
+
+            const tableBody = products.map(p => [
+                p.id,
+                p.name,
+                p.price,
+                p.stock,
+                p.category_name || 'Uncategorized',
+                p.created_at || ''
+            ]);
+
+            doc.setFontSize(14);
+            doc.text('All Products Report', 14, 15);
+
+            doc.autoTable({
+                head: [['ID', 'Name', 'Price', 'Stock', 'Category', 'Created At']],
+                body: tableBody,
+                startY: 20,
+                styles: { fontSize: 9 },
+                headStyles: { fillColor: [33, 37, 41] }
+            });
+
+            doc.save(getExportFileName('pdf'));
+        } catch (error) {
+            console.error('PDF export error:', error);
+            alert('Failed to export PDF.');
+        }
+    }
 
     function fetchProducts() {
         const search = searchInput.value.trim();
@@ -132,6 +236,14 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     categoryFilter.addEventListener('change', applySearchAndFilters);
+
+    if (exportCsvBtn) {
+        exportCsvBtn.addEventListener('click', exportCsv);
+    }
+
+    if (exportPdfBtn) {
+        exportPdfBtn.addEventListener('click', exportPdf);
+    }
 
     fetchCategories();
     fetchProducts();

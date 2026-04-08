@@ -58,8 +58,10 @@
                 <div class="col-md-2">
                     <button id="filterBtn" class="btn btn-primary">Filter</button>
                 </div>
-                 <div class="col-md-3 text-end">
-                    <a href="add-product.html" class="btn btn-success"><i class="bi bi-plus-circle"></i> Add New Product</a>
+                <div class="col-md-3 text-end">
+                    <button id="exportCsvBtn" class="btn btn-outline-secondary me-2"><i class="bi bi-filetype-csv"></i> CSV</button>
+                    <button id="exportPdfBtn" class="btn btn-outline-danger me-2"><i class="bi bi-filetype-pdf"></i> PDF</button>
+                    <a href="add-product.html" class="btn btn-success ms-1"><i class="bi bi-plus-circle"></i> Add New Product</a>
                 </div>
             </div>
 
@@ -90,6 +92,8 @@
 </div>
 
 <script src="js/theme.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 <script src="js/products.js"></script>
 <script src="js/logout.js"></script>
 
