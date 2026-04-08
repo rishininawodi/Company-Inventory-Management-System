@@ -1,6 +1,8 @@
+//store the chart empty  to update or refresh it later
 let categoryStockChart = null;
 
 document.addEventListener("DOMContentLoaded", function () {
+    //get user from localstorage or current session storage
     const storedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
     const user = storedUser ? JSON.parse(storedUser) : null;
     if (!user) {
@@ -12,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (username) {
         username.innerText = user.name || "";
     }
-
+//Calling main function to load all data
     loadDashboard();
 });
 
@@ -33,7 +35,7 @@ function loadDashboard() {
             }
         })
         .catch(error => console.error("Error loading dashboard stats:", error));
-
+//get products (all) endpoint
     fetch("http://localhost/Company-Inventory-Management-System/backend/api/get_products.php?limit=5")
         .then(res => {
             if (!res.ok) {

@@ -1,3 +1,5 @@
+//connects  frontend with backend APIs and handles everything related to editing a product
+
 document.addEventListener('DOMContentLoaded', function () {
     const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
     const user = storedUser ? JSON.parse(storedUser) : null;
@@ -6,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
+    //getting form elements
     const form = document.getElementById('editProductForm');
     const productIdInput = document.getElementById('productId');
     const nameInput = document.getElementById('name');
@@ -15,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const existingImagesContainer = document.getElementById('existingImages');
     const newImagesInput = document.getElementById('new_images');
 
+    //Get product ID from URL
     const params = new URLSearchParams(window.location.search);
     const productId = params.get('id');
 
@@ -23,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.href = 'products.html';
         return;
     }
-
+//Fetch categories
     function fetchCategories(selectedId) {
         return fetch('http://localhost/Company-Inventory-Management-System/backend/api/get_categories.php')
             .then(response => {
@@ -95,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
             existingImagesContainer.appendChild(col);
         });
     }
-
+//fetch product details
     function fetchProduct() {
         return fetch(`http://localhost/Company-Inventory-Management-System/backend/api/get_product.php?id=${encodeURIComponent(productId)}`)
             .then(response => {
@@ -123,6 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.location.href = 'products.html';
             });
     }
+    //updating product
 
     form.addEventListener('submit', function (event) {
         event.preventDefault();
@@ -141,6 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(data => {
                 const files = newImagesInput.files;
+                //upload new images 
                 if (files && files.length > 0) {
                     const imageFormData = new FormData();
                     imageFormData.append('product_id', productId);

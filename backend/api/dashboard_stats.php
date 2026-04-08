@@ -4,6 +4,7 @@ include "../config/db.php";
 
 $response = ['success' => false, 'data' => []];
 
+//helper function to use for avoid repeating same code.
 function fetchCountValue($conn, $sql, $fieldName) {
 	$result = $conn->query($sql);
 	if (!$result) {

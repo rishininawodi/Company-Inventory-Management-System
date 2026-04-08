@@ -2,16 +2,19 @@
 header("Content-Type: application/json");
 include "../config/db.php";
 
+//Gets form data from request.
 $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
 $name = isset($_POST['name']) ? trim($_POST['name']) : '';
 $email = isset($_POST['email']) ? trim($_POST['email']) : '';
 $password = isset($_POST['password']) ? trim($_POST['password']) : '';
 
+//validation part
 if ($id <= 0 || $name === '' || $email === '') {
     echo json_encode(["success" => false, "message" => "Name, email and user id are required"]);
     exit();
 }
 
+//Checks if another user already uses same email
 $checkStmt = $conn->prepare("SELECT id FROM users WHERE email = ? AND id <> ? LIMIT 1");
 $checkStmt->bind_param("si", $email, $id);
 $checkStmt->execute();
@@ -23,6 +26,7 @@ if ($checkResult && $checkResult->num_rows > 0) {
 }
 
 $newImageName = null;
+//Handling profile image upload.
 if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
     $uploadDir = __DIR__ . "/../../uploads/";
     if (!is_dir($uploadDir)) {
@@ -38,18 +42,19 @@ if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPL
         exit();
     }
 }
-
+//Builds query dynamically
 $setParts = ["name = ?", "email = ?"];
 $params = [$name, $email];
 $types = "ss";
 
+//Hash password and update only if given.
 if ($password !== '') {
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     $setParts[] = "password = ?";
     $params[] = $hashedPassword;
     $types .= "s";
 }
-
+//Update image only if uploaded
 if ($newImageName !== null) {
     $setParts[] = "profile_image = ?";
     $params[] = $newImageName;
@@ -68,6 +73,7 @@ if (!$stmt->execute()) {
     exit();
 }
 
+//Fetch updated data
 $getStmt = $conn->prepare("SELECT id, name, email, role, profile_image, created_at FROM users WHERE id = ? LIMIT 1");
 $getStmt->bind_param("i", $id);
 $getStmt->execute();
