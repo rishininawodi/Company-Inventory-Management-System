@@ -8,10 +8,12 @@ function logout(event) {
         .then(data => {
             alert(data.message);
             localStorage.removeItem("user");
+            sessionStorage.removeItem("user");
             window.location.href = "login.html";
         })
         .catch(() => {
             localStorage.removeItem("user");
+            sessionStorage.removeItem("user");
             window.location.href = "login.html";
         });
 }

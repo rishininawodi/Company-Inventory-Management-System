@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const storedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
+    const user = storedUser ? JSON.parse(storedUser) : null;
     if (!user) {
         window.location.href = "login.html";
         return;

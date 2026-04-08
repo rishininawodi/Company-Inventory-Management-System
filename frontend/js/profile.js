@@ -1,5 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const localUserRaw = localStorage.getItem('user');
+    const sessionUserRaw = sessionStorage.getItem('user');
+    const storedUser = localUserRaw || sessionUserRaw;
+    const user = storedUser ? JSON.parse(storedUser) : null;
+    const useLocalStorage = !!localUserRaw;
     if (!user) {
         window.location.href = 'login.html';
         return;
@@ -74,8 +78,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert(data.message || 'Profile updated');
 
                 if (data.success && data.data) {
-                    const previous = JSON.parse(localStorage.getItem('user')) || {};
-                    localStorage.setItem('user', JSON.stringify({ ...previous, ...data.data }));
+                    const previous = storedUser ? JSON.parse(storedUser) : {};
+                    const updatedUser = JSON.stringify({ ...previous, ...data.data });
+                    if (useLocalStorage) {
+                        localStorage.setItem('user', updatedUser);
+                    } else {
+                        sessionStorage.setItem('user', updatedUser);
+                    }
                     passwordInput.value = '';
                     setPreviewImage(data.data.profile_image || '');
                 }
