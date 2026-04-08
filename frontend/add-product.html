@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .sidebar {
+            height: 100vh;
+            background: #212529;
+            color: white;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 12px;
+        }
+        .sidebar a:hover {
+            background: #343a40;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 sidebar p-3">
+            <h4 class="text-center">Inventory</h4>
+            <hr>
+            <a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <a href="products.html"><i class="bi bi-box"></i> Products</a>
+            <a href="add-product.html"><i class="bi bi-plus-circle"></i> Add Product</a>
+            <a href="profile.html"><i class="bi bi-person"></i> Profile</a>
+            <a href="#" onclick="logout(event)"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        </div>
+
+        <div class="col-md-10 p-4">
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Add New Product</h5>
+                    <a href="products.html" class="btn btn-secondary btn-sm">Back</a>
+                </div>
+                <div class="card-body">
+                    <form id="addProductForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="price" class="form-label">Price</label>
+                                <input type="number" class="form-control" id="price" name="price" min="0" step="0.01" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="stock" class="form-label">Stock</label>
+                                <input type="number" class="form-control" id="stock" name="stock" min="0" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="category_name" class="form-label">Category</label>
+                                <input type="text" class="form-control" id="category_name" name="category_name" list="category_suggestions" placeholder="Type category" required>
+                                <datalist id="category_suggestions"></datalist>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Image</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Add Product</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/add-product.js"></script>
+<script src="js/logout.js"></script>
+</body>
+</html>
